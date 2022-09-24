@@ -25,25 +25,25 @@ router.post("/", function (req, res) {
   //  });
   // console.log(req.body['m2m:sgn']['m2m:nev']['m2m:rep']['m2m:cin']);
 
-  // om2m_string = req.body["m2m:sgn"]["m2m:nev"]["m2m:rep"]["m2m:cin"]["con"];
-  // raw_data = om2m_string.split(" ");
+  om2m_string = req.body["m2m:sgn"]["m2m:nev"]["m2m:rep"]["m2m:cin"]["con"];
+  raw_data = om2m_string.split(" ");
 
-  // console.log(raw_data[0], raw_data[1], raw_data[2]);
-  // console.log("Recieved Data from om2m\n");
+  console.log(raw_data[0], raw_data[1], raw_data[2]);
+  console.log("Recieved Data from om2m\n");
 
-  // const data = new SomeModel({
-  //   x: Number(raw_data[0]),
-  //   y: Number(raw_data[1]),
-  //   t: Number(raw_data[2]),
-  // });
-  // data
-  //   .save()
-  //   .then((user) => {
-  //     console.log("Saved Data to Database\n");
-  //   })
-  //   .catch((err) => {
-  //     console.log(err);
-  //   });
+  const data = new SomeModel({
+    x: Number(raw_data[0]*2),
+    y: Number(raw_data[1]*2),
+    t: Number(raw_data[2]*2),
+  });
+  data
+    .save()
+    .then((user) => {
+      console.log("Saved Data to Database\n");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 });
 
 module.exports = router;
