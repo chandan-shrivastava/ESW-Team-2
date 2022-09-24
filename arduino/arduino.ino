@@ -6,7 +6,7 @@
 #include <ArduinoHttpClient.h>
 
 MotorDriver m;
-bool on = true;
+bool on = false;
 
 #define TRIG_PIN A0
 #define ECHO_PIN A1
@@ -78,35 +78,36 @@ void loop()
   }
   if (on)
   {
-    if (digitalRead(irLeft) == 0 && digitalRead(irRight) == 0)
+    int xd = digitalRead(irLeft);
+    int yd = digitalRead(irRight);
+    if (xd == 0 && yd == 0)
     {
       objectAvoid();
     }
-    else if (digitalRead(irLeft) == 0 && digitalRead(irRight) == 1)
+    else if (xd == 0 && yd == 1)
     {
-     // objectAvoid();
+      // objectAvoid();
       moveStop();
-    delay(100);
-    moveBackward();
-    delay(300);
-    turnLeft();
-    }
-    else if (digitalRead(irLeft) == 1 && digitalRead(irRight) == 0)
-    {
-     // objectAvoid();
-      moveStop();
-    delay(100);
-    moveBackward();
-    delay(300);
+      delay(100);
+      moveBackward();
+      delay(300);
       turnRight();
-      
     }
-    else if (digitalRead(irLeft) == 1 && digitalRead(irRight) == 1)
+    else if (xd == 1 && yd == 0)
     {
-            moveStop();
-    delay(100);
-    moveBackward();
-    delay(300);
+      // objectAvoid();
+      moveStop();
+      delay(100);
+      moveBackward();
+      delay(300);
+      turnLeft();
+    }
+    else if (xd == 1 && yd == 1)
+    {
+      moveStop();
+      delay(100);
+      moveBackward();
+      delay(300);
       turnRight();
     }
   }
@@ -118,8 +119,7 @@ void loop()
 void objectAvoid()
 {
   distance = readPing();
-  
-  }
+
   int distanceR = 0;
   int distanceL = 0;
   if (distance <= 25)
@@ -132,12 +132,17 @@ void objectAvoid()
     moveStop();
     delay(200);
     unsigned long t = millis();
+    x=x*0.5;
+    y=y*0.5;
+    t=t*0.5;
     String val = String(x) + " " + String(y) + " " + String(t);
 
-    // createCI(val);
-    // ThingSpeak.setField(1, x);
-    // ThingSpeak.setField(2, y);
-    // int response_thingspeak = ThingSpeak.writeFields(myChannelNumber, myWriteAPIKey);
+
+
+    createCI(val);
+    ThingSpeak.setField(1, x);
+    ThingSpeak.setField(2, y);
+    int response_thingspeak = ThingSpeak.writeFields(myChannelNumber, myWriteAPIKey);
 
     distanceR = lookRight();
     delay(200);
@@ -302,12 +307,9 @@ void createCI(String val)
 
 void printWifiStatus()
 {
-  Serial.print("SSID: ");
   IPAddress ip = WiFi.localIP();
   Serial.print("IP Address: ");
-  long rssi = WiFi.RSSI();
-  Serial.print("signal strength (RSSI):");
-  Serial.print(rssi);
+  Serial.print(ip);
 }
 
 void connect_WiFi()
